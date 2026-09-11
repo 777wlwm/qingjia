@@ -10,8 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="学综服务">
 <meta name="description" content="学综服务：住宿、交费、学生事务、助学一站式校园服务">
 <title>学综服务</title>
-<link rel="manifest" href='data:application/manifest+json,%7B%22name%22:%22%E5%AD%A6%E7%BB%BC%E6%9C%8D%E5%8A%A1%22,%22short_name%22:%22%E5%AD%A6%E7%BB%BC%E6%9C%8D%E5%8A%A1%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%231484FC%22%7D'>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
 <style>
 /* ================= 基础 ================= */
 :root{
@@ -32,9 +33,11 @@ body{
 button{font-family:inherit}
 
 /* ================= 顶部蓝色栏 ================= */
-.app-header{background:var(--blue);color:#fff;padding:9px 14px 12px}
-.statusbar{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;padding:0 2px 9px}
-.sb-icons{display:flex;align-items:center;gap:5px}
+.app-header{
+  background:var(--blue);
+  color:#fff;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 14px 12px;
+}
 .header-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:26px}
 .header-row h1{font-size:16.5px;font-weight:600;letter-spacing:.5px}
 .back{position:absolute;left:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:2px}
@@ -51,14 +54,14 @@ button{font-family:inherit}
 .section{margin-top:28px}
 .sec-title{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600;color:var(--ink)}
 .sec-title::before{content:"";width:4px;height:17px;background:#569cd9;border-radius:2px;flex-shrink:0}
-/* 板块内功能图标：松散不规则摆放（非网格） */
-.sec-items{position:relative;height:76px;margin-top:12px}
-.sec-item{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;border:none;background:none;padding:0}
-.sec-item .icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
-.sec-item .name{font-size:12px;color:#6c6c6c}
-.pos-1{left:14%;top:0;transform:translateX(-50%)}
-.pos-2{left:48%;top:10px;transform:translateX(-50%)}
-.pos-3{left:74%;top:2px;transform:translateX(-50%)}
+.sec-items{position:relative;height:80px;margin-top:14px}
+.sec-item{position:absolute;display:flex;flex-direction:column;align-items:center;gap:9px;border:none;background:none;padding:0}
+.sec-item .icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+.sec-item .name{font-size:12px;color:#6c6c6c;white-space:nowrap}
+/* 修改了图标位置，使左右两边严格对齐居中 */
+.pos-1{left:16.66%;top:0;transform:translateX(-50%)}
+.pos-2{left:50%;top:6px;transform:translateX(-50%)}
+.pos-3{left:83.33%;top:2px;transform:translateX(-50%)}
 
 /* ================= 请假记录页 ================= */
 .tabs{display:grid;grid-template-columns:1fr 1fr;padding:15px 0 3px;background:#fff}
@@ -83,7 +86,7 @@ button{font-family:inherit}
 .leave-body{margin-top:13px}
 .lrow{font-size:14.5px;color:var(--body);padding:5px 0}
 
-/* 四个操作按钮：深蓝色、整体靠右、上方带分隔线 */
+/* 四个操作按钮 */
 .leave-actions{
   margin-top:14px;
   padding-top:14px;
@@ -97,8 +100,9 @@ button{font-family:inherit}
   border:none;
   border-radius:6px;
   color:#fff;
-  font-size:12.5px;
-  padding:7px 15px;
+  font-size:13px;
+  font-weight:500;
+  padding:6px 12px;
   cursor:pointer;
   white-space:nowrap;
 }
@@ -148,14 +152,6 @@ button{font-family:inherit}
   <!-- ============ 首页 ============ -->
   <div id="page-home" class="page active">
     <header class="app-header">
-      <div class="statusbar">
-        <span id="status-time">19:16</span>
-        <span class="sb-icons">
-          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
-          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
-          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
-        </span>
-      </div>
       <div class="header-row"><h1>学综服务</h1></div>
     </header>
 
@@ -224,17 +220,9 @@ button{font-family:inherit}
   <!-- ============ 请假记录页 ============ -->
   <div id="page-leave" class="page">
     <header class="app-header">
-      <div class="statusbar">
-        <span id="status-time2">19:16</span>
-        <span class="sb-icons">
-          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
-          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
-          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
-        </span>
-      </div>
       <div class="header-row">
         <button class="back" data-go="home" aria-label="返回">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 L8 12 L14.5 19" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
         </button>
         <h1>请假申请</h1>
         <button class="header-btn" type="button" data-toast="「申办」为演示功能">申办</button>
@@ -246,7 +234,6 @@ button{font-family:inherit}
       <button class="tab" data-tab="reviewed">已审核</button>
     </div>
 
-    <!-- 待审核 -->
     <div id="tab-pending" class="tab-pane active">
       <div class="empty" id="empty-pending">
         <svg viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -272,7 +259,6 @@ button{font-family:inherit}
       <div class="cards" id="list-pending"></div>
     </div>
 
-    <!-- 已审核 -->
     <div id="tab-reviewed" class="tab-pane">
       <div class="empty" id="empty-reviewed">
         <svg viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -302,17 +288,9 @@ button{font-family:inherit}
   <!-- ============ 请假表单页 ============ -->
   <div id="page-form" class="page">
     <header class="app-header">
-      <div class="statusbar">
-        <span id="status-time3">19:16</span>
-        <span class="sb-icons">
-          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
-          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
-          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
-        </span>
-      </div>
       <div class="header-row">
         <button class="back" data-go="home" aria-label="返回">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 L8 12 L14.5 19" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
         </button>
         <h1>请假表单</h1>
       </div>
@@ -347,17 +325,9 @@ button{font-family:inherit}
   <!-- ============ 交费信息（数据管理）页 ============ -->
   <div id="page-settings" class="page">
     <header class="app-header">
-      <div class="statusbar">
-        <span id="status-time4">19:16</span>
-        <span class="sb-icons">
-          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
-          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
-          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
-        </span>
-      </div>
       <div class="header-row">
         <button class="back" data-go="home" aria-label="返回">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 L8 12 L14.5 19" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
         </button>
         <h1>交费信息</h1>
       </div>
@@ -432,7 +402,8 @@ button{font-family:inherit}
 <script>
 (function () {
   'use strict';
-  var LS_KEY = 'leaveRecords_v2';
+  // 修改了版本号，强制浏览器刷新缓存数据
+  var LS_KEY = 'leaveRecords_v3';
 
   function $(s) { return document.querySelector(s); }
   function esc(s) {
@@ -441,11 +412,11 @@ button{font-family:inherit}
     });
   }
 
-  /* ---------- 数据（示例 = 截图中的真实记录） ---------- */
+  /* ---------- 数据（已根据图二修改为3条） ---------- */
   var SAMPLES = [
-    { type: '病假（不过夜）', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-25 18:00', punch: '1/2', audit: '通过', cancel: '未申请' },
-    { type: '病假（不过夜）', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/5', audit: '通过', cancel: '未申请' },
-    { type: '病假（不过夜）', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '通过', cancel: '未申请' }
+    { type: '病假(不过夜)', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-23 18:00', punch: '1/2', audit: '通过', cancel: '未申请' },
+    { type: '病假(不过夜)', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/3', audit: '通过', cancel: '未申请' },
+    { type: '病假(不过夜)', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '通过', cancel: '未申请' }
   ];
   function makeSamples() {
     return SAMPLES.map(function (r) {
@@ -462,9 +433,8 @@ button{font-family:inherit}
   var PENDING = ['待审核', '审核中'];
   function isPending(r) { return PENDING.indexOf(r.audit) > -1; }
 
-  /* ---------- 渲染：请假记录 ---------- */
   function cardHTML(r) {
-    var timeLine = [r.start, r.end].filter(Boolean).join(' 至 ');
+    var timeLine = [r.start, r.end].filter(Boolean).join('至');
     return '<div class="leave-card">'
       + '<div class="leave-top">'
       +   '<span class="leave-dot"></span>'
@@ -489,17 +459,15 @@ button{font-family:inherit}
     $('#empty-' + name).style.display = list.length ? 'none' : 'flex';
     $('#list-' + name).innerHTML = list.map(cardHTML).join('');
   }
+  
   function renderLeave() {
     var pend = [], done = [];
     records.forEach(function (r) { (isPending(r) ? pend : done).push(r); });
-    pend.reverse();
-    done.reverse();
     fillPane('pending', pend);
     fillPane('reviewed', done);
     bindToasts();
   }
 
-  /* ---------- 渲染：交费信息列表 ---------- */
   function chipClass(t) {
     if (/病/.test(t)) return 'chip-orange';
     if (/事/.test(t)) return 'chip-blue';
@@ -508,7 +476,7 @@ button{font-family:inherit}
   }
   function renderSettings() {
     $('#saved-count').textContent = records.length + ' 条';
-    $('#saved-list').innerHTML = records.slice().reverse().map(function (r) {
+    $('#saved-list').innerHTML = records.slice().map(function (r) {
       return '<div class="saved-item">'
         + '<span class="chip ' + chipClass(r.type) + '">' + esc(r.type) + '</span>'
         + '<div class="info"><b>' + esc(r.applyTime) + '</b>'
@@ -519,7 +487,6 @@ button{font-family:inherit}
   }
   function renderAll() { renderLeave(); renderSettings(); }
 
-  /* ---------- 路由 ---------- */
   function navigate(name) {
     if (location.hash === '#' + name) { route(); }
     else { location.hash = name; }
@@ -535,7 +502,6 @@ button{font-family:inherit}
   }
   window.addEventListener('hashchange', route);
 
-  /* ---------- 标签页切换 ---------- */
   function switchTab(name) {
     document.querySelectorAll('.tabs .tab').forEach(function (x) {
       x.classList.toggle('active', x.dataset.tab === name);
@@ -548,12 +514,10 @@ button{font-family:inherit}
     t.addEventListener('click', function () { switchTab(t.dataset.tab); });
   });
 
-  /* ---------- 点击跳转 ---------- */
   document.querySelectorAll('[data-go]').forEach(function (el) {
     el.addEventListener('click', function () { navigate(el.dataset.go); });
   });
 
-  /* ---------- 轻提示 ---------- */
   var toastTimer = null;
   function toast(msg) {
     var t = $('#toast');
@@ -571,7 +535,6 @@ button{font-family:inherit}
   }
   bindToasts();
 
-  /* ---------- 请假表单：提交申请 ---------- */
   $('#apply-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var type = $('#a-type').value.trim();
@@ -596,7 +559,6 @@ button{font-family:inherit}
     toast('申请已提交，可在「待审核」查看');
   });
 
-  /* ---------- 表单：添加记录（数据管理页） ---------- */
   $('#record-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var val = function (id) { return $(id).value.trim(); };
@@ -618,7 +580,6 @@ button{font-family:inherit}
     toast('已添加记录');
   });
 
-  /* ---------- 删除单条 ---------- */
   $('#saved-list').addEventListener('click', function (e) {
     var b = e.target.closest('.btn-del');
     if (!b) return;
@@ -629,7 +590,6 @@ button{font-family:inherit}
     toast('已删除');
   });
 
-  /* ---------- 清空 / 恢复示例 ---------- */
   $('#btn-clear').addEventListener('click', function () {
     if (!confirm('确定清空全部记录吗？')) return;
     records = [];
@@ -645,16 +605,12 @@ button{font-family:inherit}
     toast('已恢复示例数据');
   });
 
-  /* ---------- 状态栏时间 ---------- */
-  var now = new Date();
-  var hh = now.getHours(), mm = now.getMinutes();
-  var timeStr = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
-  ['status-time', 'status-time2', 'status-time3', 'status-time4'].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = timeStr;
-  });
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
 
-  /* ---------- 初始化 ---------- */
   route();
 })();
 </script>
