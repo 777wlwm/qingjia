@@ -23,7 +23,7 @@
   --light:#ABABAB;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-/* 修复1：顶部状态栏颜色跟随 body，改为蓝色 */
+/* 修复：顶部状态栏颜色跟随 body，改为蓝色，消除白边 */
 body{
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
   background:var(--blue);color:var(--ink);font-size:14px;
@@ -37,7 +37,7 @@ button{font-family:inherit}
 .app-header{
   background:var(--blue);
   color:#fff;
-  /* 修复2：确保安全区生效，如果失效也保底有 20px 间距，防止顶死 */
+  /* 修复：确保安全区生效，如果失效也保底有 20px 间距，防止顶死 */
   padding: max(env(safe-area-inset-top, 0px), 20px) 14px 12px;
 }
 .header-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:26px}
@@ -405,7 +405,7 @@ button{font-family:inherit}
 (function () {
   'use strict';
   // 修改了版本号，强制浏览器刷新缓存数据
-  var LS_KEY = 'leaveRecords_v4';
+  var LS_KEY = 'leaveRecords_v5';
 
   function $(s) { return document.querySelector(s); }
   function esc(s) {
@@ -414,207 +414,12 @@ button{font-family:inherit}
     });
   }
 
-  /* ---------- 数据（混合待审核与已审核，确保都有数据） ---------- */
+  /* ---------- 数据（将3条数据全部设为待审核，确保待审核有内容） ---------- */
   var SAMPLES = [
-    { type: '病假(不过夜)', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-23 18:00', punch: '1/2', audit: '待审核', cancel: '未申请' }, // 第1条改为待审核
-    { type: '病假(不过夜)', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/3', audit: '通过', cancel: '未申请' },
-    { type: '病假(不过夜)', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '通过', cancel: '未申请' }
+    { type: '病假(不过夜)', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-23 18:00', punch: '1/2', audit: '待审核', cancel: '未申请' },
+    { type: '病假(不过夜)', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/3', audit: '待审核', cancel: '未申请' },
+    { type: '病假(不过夜)', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '待审核', cancel: '未申请' }
   ];
   function makeSamples() {
     return SAMPLES.map(function (r) {
-      return Object.assign({ id: Date.now() + Math.random() }, r);
-    });
-  }
-  var records;
-  try { records = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { records = null; }
-  if (!Array.isArray(records)) { records = makeSamples(); save(); }
-  function save() {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(records)); } catch (e) {}
-  }
-
-  var PENDING = ['待审核', '审核中'];
-  function isPending(r) { return PENDING.indexOf(r.audit) > -1; }
-
-  function cardHTML(r) {
-    var timeLine = [r.start, r.end].filter(Boolean).join('至');
-    return '<div class="leave-card">'
-      + '<div class="leave-top">'
-      +   '<span class="leave-dot"></span>'
-      +   '<span class="leave-type">' + esc(r.type) + '</span>'
-      +   '<span class="apply-time">' + esc(r.applyTime) + '</span>'
-      + '</div>'
-      + '<div class="leave-body">'
-      +   '<div class="lrow">' + esc(timeLine) + '</div>'
-      +   '<div class="lrow">打卡次数(实/应)：' + esc(r.punch) + '</div>'
-      +   '<div class="lrow">请假审核状态：' + esc(r.audit) + '</div>'
-      +   '<div class="lrow">销假状态：' + esc(r.cancel) + '</div>'
-      + '</div>'
-      + '<div class="leave-actions">'
-      +   '<button type="button" data-toast="「延长请假」为演示功能">延长请假</button>'
-      +   '<button type="button" data-toast="「销假」为演示功能">销假</button>'
-      +   '<button type="button" data-toast="「打卡」为演示功能">打卡</button>'
-      +   '<button type="button" data-toast="「查看」为演示功能">查看</button>'
-      + '</div>'
-      + '</div>';
-  }
-  function fillPane(name, list) {
-    $('#empty-' + name).style.display = list.length ? 'none' : 'flex';
-    $('#list-' + name).innerHTML = list.map(cardHTML).join('');
-  }
-  
-  function renderLeave() {
-    var pend = [], done = [];
-    records.forEach(function (r) { (isPending(r) ? pend : done).push(r); });
-    fillPane('pending', pend);
-    fillPane('reviewed', done);
-    bindToasts();
-  }
-
-  function chipClass(t) {
-    if (/病/.test(t)) return 'chip-orange';
-    if (/事/.test(t)) return 'chip-blue';
-    if (/公|婚/.test(t)) return 'chip-purple';
-    return 'chip-teal';
-  }
-  function renderSettings() {
-    $('#saved-count').textContent = records.length + ' 条';
-    $('#saved-list').innerHTML = records.slice().map(function (r) {
-      return '<div class="saved-item">'
-        + '<span class="chip ' + chipClass(r.type) + '">' + esc(r.type) + '</span>'
-        + '<div class="info"><b>' + esc(r.applyTime) + '</b>'
-        + '<span>' + esc(r.start) + ' → ' + esc(r.end) + ' · 打卡 ' + esc(r.punch) + ' · ' + esc(r.audit) + ' · ' + esc(r.cancel) + '</span></div>'
-        + '<button class="btn-del" data-id="' + r.id + '">删除</button>'
-        + '</div>';
-    }).join('');
-  }
-  function renderAll() { renderLeave(); renderSettings(); }
-
-  function navigate(name) {
-    if (location.hash === '#' + name) { route(); }
-    else { location.hash = name; }
-  }
-  function route() {
-    var name = location.hash.replace(/^#\/?/, '') || 'home';
-    document.querySelectorAll('.page').forEach(function (p) {
-      p.classList.toggle('active', p.id === 'page-' + name);
-    });
-    window.scrollTo(0, 0);
-    if (name === 'leave') renderLeave();
-    if (name === 'settings') renderSettings();
-  }
-  window.addEventListener('hashchange', route);
-
-  function switchTab(name) {
-    document.querySelectorAll('.tabs .tab').forEach(function (x) {
-      x.classList.toggle('active', x.dataset.tab === name);
-    });
-    document.querySelectorAll('.tab-pane').forEach(function (p) {
-      p.classList.toggle('active', p.id === 'tab-' + name);
-    });
-  }
-  document.querySelectorAll('.tabs .tab').forEach(function (t) {
-    t.addEventListener('click', function () { switchTab(t.dataset.tab); });
-  });
-
-  document.querySelectorAll('[data-go]').forEach(function (el) {
-    el.addEventListener('click', function () { navigate(el.dataset.go); });
-  });
-
-  var toastTimer = null;
-  function toast(msg) {
-    var t = $('#toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1600);
-  }
-  function bindToasts() {
-    document.querySelectorAll('[data-toast]').forEach(function (el) {
-      if (el.dataset.bound) return;
-      el.dataset.bound = '1';
-      el.addEventListener('click', function () { toast(el.dataset.toast); });
-    });
-  }
-  bindToasts();
-
-  $('#apply-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var type = $('#a-type').value.trim();
-    if (!type) { toast('请先填写请假类型'); return; }
-    var d = new Date();
-    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
-    records.push({
-      id: Date.now() + Math.random(),
-      type: type,
-      applyTime: p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()),
-      start: $('#a-start').value.trim(),
-      end: $('#a-end').value.trim(),
-      punch: '',
-      audit: '待审核',
-      cancel: '未申请'
-    });
-    save();
-    renderAll();
-    $('#apply-form').reset();
-    switchTab('pending');
-    navigate('leave');
-    toast('申请已提交，可在「待审核」查看');
-  });
-
-  $('#record-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var val = function (id) { return $(id).value.trim(); };
-    var type = val('#f-type');
-    if (!type) { toast('请先填写请假类型'); return; }
-    records.push({
-      id: Date.now() + Math.random(),
-      type: type,
-      applyTime: val('#f-apply'),
-      start: val('#f-start'),
-      end: val('#f-end'),
-      punch: val('#f-punch'),
-      audit: val('#f-audit'),
-      cancel: val('#f-cancel')
-    });
-    save();
-    renderAll();
-    $('#record-form').reset();
-    toast('已添加记录');
-  });
-
-  $('#saved-list').addEventListener('click', function (e) {
-    var b = e.target.closest('.btn-del');
-    if (!b) return;
-    if (!confirm('确定删除这条记录吗？')) return;
-    records = records.filter(function (r) { return String(r.id) !== b.dataset.id; });
-    save();
-    renderAll();
-    toast('已删除');
-  });
-
-  $('#btn-clear').addEventListener('click', function () {
-    if (!confirm('确定清空全部记录吗？')) return;
-    records = [];
-    save();
-    renderAll();
-    toast('已清空');
-  });
-  $('#btn-restore').addEventListener('click', function () {
-    if (!confirm('将删除现有记录并恢复示例数据，确定吗？')) return;
-    records = makeSamples();
-    save();
-    renderAll();
-    toast('已恢复示例数据');
-  });
-
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('./sw.js').catch(function () {});
-    });
-  }
-
-  route();
-})();
-</script>
-</body>
-</html>
+      return Object.assign({ id: Date.now()
