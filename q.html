@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1484FC">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="学综服务">
+<meta name="description" content="学综服务：住宿、交费、学生事务、助学一站式校园服务">
+<title>学综服务</title>
+<link rel="manifest" href='data:application/manifest+json,%7B%22name%22:%22%E5%AD%A6%E7%BB%BC%E6%9C%8D%E5%8A%A1%22,%22short_name%22:%22%E5%AD%A6%E7%BB%BC%E6%9C%8D%E5%8A%A1%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%231484FC%22%7D'>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<style>
+/* ================= 基础 ================= */
+:root{
+  --blue:#1484FC;
+  --ink:#3A3A3A;
+  --body:#4E4E4E;
+  --gray:#8E8E8E;
+  --light:#ABABAB;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+  background:#e4e8f0;color:var(--ink);font-size:14px;
+}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:#fff}
+.page{display:none;min-height:100vh}
+.page.active{display:flex;flex-direction:column}
+button{font-family:inherit}
+
+/* ================= 顶部蓝色栏 ================= */
+.app-header{background:var(--blue);color:#fff;padding:9px 14px 12px}
+.statusbar{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;padding:0 2px 9px}
+.sb-icons{display:flex;align-items:center;gap:5px}
+.header-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:26px}
+.header-row h1{font-size:16.5px;font-weight:600;letter-spacing:.5px}
+.back{position:absolute;left:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:2px}
+.header-btn{position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:15.5px;cursor:pointer;letter-spacing:1px}
+
+/* ================= 首页 ================= */
+#page-home{background:#fff}
+.home-body{padding:14px 16px 34px;flex:1}
+.search-row{display:flex;gap:12px;align-items:flex-start}
+.search-bar{flex:1;height:36px;background:#f2f4f7;border-radius:18px;display:flex;align-items:center;padding:0 14px;gap:8px}
+.search-bar span{font-size:13px;color:#a9afb8}
+.follow-btn{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 2px}
+.follow-btn span{font-size:11.5px;color:var(--gray)}
+.section{margin-top:28px}
+.sec-title{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600;color:var(--ink)}
+.sec-title::before{content:"";width:4px;height:17px;background:#569cd9;border-radius:2px;flex-shrink:0}
+/* 板块内功能图标：松散不规则摆放（非网格） */
+.sec-items{position:relative;height:76px;margin-top:12px}
+.sec-item{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;border:none;background:none;padding:0}
+.sec-item .icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+.sec-item .name{font-size:12px;color:#6c6c6c}
+.pos-1{left:14%;top:0;transform:translateX(-50%)}
+.pos-2{left:48%;top:10px;transform:translateX(-50%)}
+.pos-3{left:74%;top:2px;transform:translateX(-50%)}
+
+/* ================= 请假记录页 ================= */
+.tabs{display:grid;grid-template-columns:1fr 1fr;padding:15px 0 3px;background:#fff}
+.tab{position:relative;text-align:center;font-size:15px;color:var(--gray);cursor:pointer;background:none;border:none;padding-bottom:13px}
+.tab.active{color:#474747;font-weight:600}
+.tab.active::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:26px;height:3px;border-radius:2px;background:#d6f2ff}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* 空状态 */
+.empty{display:flex;flex-direction:column;align-items:center;padding:120px 0 48px}
+.empty svg{width:225px;height:auto}
+.empty p{margin-top:18px;font-size:13.5px;color:#a6acb7}
+
+/* 记录卡片 */
+.cards{padding:14px 12px 26px;display:flex;flex-direction:column;gap:14px}
+.leave-card{background:#fff;border:1px solid #eef1f6;border-radius:16px;padding:16px 14px 14px}
+.leave-top{display:flex;align-items:center;gap:8px}
+.leave-dot{width:8px;height:8px;border-radius:50%;background:#1353ef;flex-shrink:0}
+.leave-type{font-size:15.5px;font-weight:700;color:#2e4b93;flex:1}
+.apply-time{font-size:11px;color:var(--light);flex-shrink:0}
+.leave-body{margin-top:13px}
+.lrow{font-size:14.5px;color:var(--body);padding:5px 0}
+
+/* 四个操作按钮：深蓝色、整体靠右、上方带分隔线 */
+.leave-actions{
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid #eef1f6;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+}
+.leave-actions button{
+  background:#1677FF;
+  border:none;
+  border-radius:6px;
+  color:#fff;
+  font-size:12.5px;
+  padding:7px 15px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.leave-actions button:active{background:#0d5fcf}
+
+/* ================= 表单 / 数据管理页 ================= */
+.set-body{padding:14px 14px 28px;flex:1}
+.tip{background:#eaf3ff;border-radius:10px;padding:11px 13px;font-size:12.5px;color:#3b6fd6;line-height:1.7;margin-bottom:14px}
+.card{background:#fff;border:1px solid #eef1f6;border-radius:14px;padding:16px 14px;margin-bottom:14px}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 10px}
+.f-field label{display:block;font-size:12.5px;color:var(--gray);margin-bottom:6px}
+.f-field.full{grid-column:1/-1}
+.f-field input,.f-field select,.f-field textarea{width:100%;padding:10px 12px;border:1px solid #e3e8f0;border-radius:10px;font-size:14.5px;color:var(--ink);background:#fbfcfe;outline:none;font-family:inherit}
+.f-field textarea{height:80px;resize:none}
+.f-field input:focus,.f-field select:focus,.f-field textarea:focus{border-color:var(--blue);background:#fff}
+.btn-primary{width:100%;padding:12px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px}
+.btn-primary:active{background:#1180ee}
+.list-head{display:flex;justify-content:space-between;align-items:center;margin:2px 2px 10px}
+.list-head b{font-size:14.5px}
+.list-head span{font-size:12px;color:var(--gray)}
+.saved-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f2f4f8}
+.saved-item:last-child{border-bottom:none}
+.saved-item .chip{font-size:12px;flex-shrink:0;white-space:nowrap}
+.saved-item .info{flex:1;min-width:0}
+.saved-item .info b{font-size:13.5px;display:block}
+.saved-item .info span{font-size:12px;color:var(--gray)}
+.chip{padding:4px 10px;border-radius:8px;font-size:13px;font-weight:600}
+.chip-orange{background:#fff1e3;color:#e8770f}
+.chip-blue{background:#e8f1ff;color:#2f6fe0}
+.chip-purple{background:#f1ebff;color:#7c4dff}
+.chip-teal{background:#e3f7f2;color:#0ba383}
+.btn-del{background:none;border:1px solid #f6c9c9;color:#e14b4b;border-radius:8px;padding:5px 12px;font-size:12.5px;cursor:pointer;flex-shrink:0}
+.btn-del:active{background:#fdeaea}
+.btn-row{display:flex;gap:10px;margin-top:14px}
+.btn-ghost{flex:1;padding:10px;background:#fff;border:1px solid #e3e8f0;border-radius:10px;color:var(--gray);font-size:13px;cursor:pointer}
+.btn-ghost:active{background:#f6f8fc}
+.foot-note{font-size:11.5px;color:#b3bac7;line-height:1.8;padding:0 6px}
+
+/* ================= 轻提示 ================= */
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:rgba(20,28,45,.88);color:#fff;font-size:13px;padding:9px 18px;border-radius:22px;opacity:0;pointer-events:none;z-index:99;max-width:80%;text-align:center}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ 首页 ============ -->
+  <div id="page-home" class="page active">
+    <header class="app-header">
+      <div class="statusbar">
+        <span id="status-time">19:16</span>
+        <span class="sb-icons">
+          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
+          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
+          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
+        </span>
+      </div>
+      <div class="header-row"><h1>学综服务</h1></div>
+    </header>
+
+    <div class="home-body">
+      <div class="search-row">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24" width="15" height="15"><circle cx="10.5" cy="10.5" r="6.5" stroke="#7a8089" stroke-width="2" fill="none"/><path d="M15.5 15.5 L20.5 20.5" stroke="#7a8089" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>输入检索关键词</span>
+        </div>
+        <button class="follow-btn" type="button">
+          <svg viewBox="0 0 24 24" width="17" height="17"><circle cx="12" cy="12" r="8" stroke="#4a4a4a" stroke-width="1.8" fill="none"/><circle cx="12" cy="12" r="2.2" fill="#4a4a4a"/></svg>
+          <span>关注服务</span>
+        </button>
+      </div>
+
+      <div class="section">
+        <div class="sec-title">住宿</div>
+        <div class="sec-items">
+          <div class="sec-item pos-1">
+            <span class="icon"><svg viewBox="0 0 40 40" width="36" height="36" fill="none"><rect x="6" y="6" width="28" height="28" rx="6" fill="#5AB5F9"/><path d="M14 18 L20 13 L26 18" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17 V24 H24 V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 24 V21 H22 V24" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 28 H18" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M22 28 H26" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="28" r="7" fill="#A5A4F0"/><text x="28" y="31.5" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold" font-family="sans-serif">外</text></svg></span>
+            <span class="name">申请校外住宿</span>
+          </div>
+          <div class="sec-item pos-2" data-go="form">
+            <span class="icon"><svg viewBox="0 0 40 40" width="36" height="36" fill="none"><path d="M14 10 H30 V26 H26" stroke="#C9A5F9" stroke-width="3" stroke-linejoin="round"/><rect x="10" y="14" width="20" height="20" rx="4" stroke="#C9A5F9" stroke-width="3"/><rect x="14" y="18" width="12" height="12" rx="3" fill="#C9A5F9"/><path d="M17 22 A3 3 0 0 1 23 22" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M23 26 A3 3 0 0 1 17 26" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M23 22 L25 20 L21 20" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 26 L15 28 L19 28" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="name">调整宿舍</span>
+          </div>
+          <div class="sec-item pos-3">
+            <span class="icon"><svg viewBox="0 0 40 40" width="36" height="36" fill="none"><rect x="6" y="6" width="28" height="28" rx="6" fill="#8B8BE8"/><path d="M14 18 L20 13 L26 18" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17 V24 H24 V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 24 V21 H22 V24" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 28 H18" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M22 28 H26" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="28" r="7" fill="#93F5D5"/><text x="28" y="31.5" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold" font-family="sans-serif">返</text></svg></span>
+            <span class="name">申请返校住宿</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-title">交费</div>
+        <div class="sec-items">
+          <div class="sec-item pos-1" data-go="settings">
+            <span class="icon"><svg viewBox="0 0 40 40" width="36" height="36" fill="none"><rect x="8" y="8" width="24" height="24" rx="4" fill="#7DA9F9"/><path d="M13 14 H21" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M13 19 H23" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M13 24 H18" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="28" r="8" fill="#F9D36B"/><text x="28" y="32" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold" font-family="sans-serif">¥</text></svg></span>
+            <span class="name">交费信息</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-title">学生事务</div>
+        <div class="sec-items">
+          <div class="sec-item pos-1" data-go="leave">
+            <span class="icon"><svg viewBox="0 0 40 40" width="36" height="36" fill="none"><circle cx="15" cy="17" r="8" stroke="#5AB5F9" stroke-width="2.5" stroke-linecap="round"/><path d="M15 13 V17 H18" stroke="#5AB5F9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="25" cy="20" r="4" stroke="#5AB5F9" stroke-width="2.5" fill="none"/><path d="M18 32 C18 27.5, 21.5 26, 25 26 C28.5 26, 32 27.5, 32 32" stroke="#5AB5F9" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+            <span class="name">请假申请</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-title">助学</div>
+        <div class="sec-items">
+          <div class="sec-item pos-1">
+            <span class="icon"><svg viewBox="0 0 40 40" width="36" height="36" fill="none"><rect x="8" y="8" width="24" height="24" rx="4" fill="#FF8A5B"/><path d="M14 16 L20 13 L26 16 L20 19 Z" fill="#fff"/><path d="M16 17.5 V20 C16 21.5, 18 23, 20 23 C22 23, 24 21.5, 24 20 V17.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M14 24 H18" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M21 24 H26" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="28" r="8" fill="#F9D36B"/><text x="28" y="31.5" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold" font-family="sans-serif">贷</text></svg></span>
+            <span class="name">助学贷款</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 请假记录页 ============ -->
+  <div id="page-leave" class="page">
+    <header class="app-header">
+      <div class="statusbar">
+        <span id="status-time2">19:16</span>
+        <span class="sb-icons">
+          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
+          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
+          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
+        </span>
+      </div>
+      <div class="header-row">
+        <button class="back" data-go="home" aria-label="返回">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 L8 12 L14.5 19" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h1>请假申请</h1>
+        <button class="header-btn" type="button" data-toast="「申办」为演示功能">申办</button>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="pending">待审核</button>
+      <button class="tab" data-tab="reviewed">已审核</button>
+    </div>
+
+    <!-- 待审核 -->
+    <div id="tab-pending" class="tab-pane active">
+      <div class="empty" id="empty-pending">
+        <svg viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="52" cy="52" r="2.5" fill="#E4E7EF"/>
+          <circle cx="262" cy="118" r="3" fill="#DFE3EC"/>
+          <circle cx="277" cy="132" r="2" fill="#E4E7EF"/>
+          <ellipse cx="195" cy="42" rx="16" ry="7" fill="#E6E9F2"/>
+          <ellipse cx="208" cy="38" rx="11" ry="6" fill="#E9ECF4"/>
+          <circle cx="92" cy="86" r="21" stroke="#C4C4C8" stroke-width="2" stroke-dasharray="5 6"/>
+          <path d="M192 108 L218 64 L204 84 L226 94 Z" fill="#D9D6E5" stroke="#B4B0C2" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M192 108 L204 84" stroke="#B4B0C2" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M192 108 C178 124,152 128,132 146" stroke="#B4B0C2" stroke-width="2.5" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <rect x="108" y="148" width="114" height="48" rx="4" fill="#D9E0F0" stroke="#B8C1CE" stroke-width="2"/>
+          <path d="M108 148 L222 148" stroke="#9AA4B5" stroke-width="2.5"/>
+          <path d="M165 148 L165 196" stroke="#C6D0E0" stroke-width="1.5"/>
+          <path d="M108 170 L222 170" stroke="#C6D0E0" stroke-width="1.5"/>
+          <rect x="150" y="156" width="30" height="11" rx="3" fill="#FFFFFF" opacity=".55"/>
+          <path d="M108 196 L100 214 L230 214 L222 196 Z" fill="#F5F7FB" stroke="#B8C1CE" stroke-width="2"/>
+          <path d="M100 214 L230 214" stroke="#9AA4B5" stroke-width="2.5"/>
+        </svg>
+        <p>暂无数据</p>
+      </div>
+      <div class="cards" id="list-pending"></div>
+    </div>
+
+    <!-- 已审核 -->
+    <div id="tab-reviewed" class="tab-pane">
+      <div class="empty" id="empty-reviewed">
+        <svg viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="52" cy="52" r="2.5" fill="#E4E7EF"/>
+          <circle cx="262" cy="118" r="3" fill="#DFE3EC"/>
+          <circle cx="277" cy="132" r="2" fill="#E4E7EF"/>
+          <ellipse cx="195" cy="42" rx="16" ry="7" fill="#E6E9F2"/>
+          <ellipse cx="208" cy="38" rx="11" ry="6" fill="#E9ECF4"/>
+          <circle cx="92" cy="86" r="21" stroke="#C4C4C8" stroke-width="2" stroke-dasharray="5 6"/>
+          <path d="M192 108 L218 64 L204 84 L226 94 Z" fill="#D9D6E5" stroke="#B4B0C2" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M192 108 L204 84" stroke="#B4B0C2" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M192 108 C178 124,152 128,132 146" stroke="#B4B0C2" stroke-width="2.5" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <rect x="108" y="148" width="114" height="48" rx="4" fill="#D9E0F0" stroke="#B8C1CE" stroke-width="2"/>
+          <path d="M108 148 L222 148" stroke="#9AA4B5" stroke-width="2.5"/>
+          <path d="M165 148 L165 196" stroke="#C6D0E0" stroke-width="1.5"/>
+          <path d="M108 170 L222 170" stroke="#C6D0E0" stroke-width="1.5"/>
+          <rect x="150" y="156" width="30" height="11" rx="3" fill="#FFFFFF" opacity=".55"/>
+          <path d="M108 196 L100 214 L230 214 L222 196 Z" fill="#F5F7FB" stroke="#B8C1CE" stroke-width="2"/>
+          <path d="M100 214 L230 214" stroke="#9AA4B5" stroke-width="2.5"/>
+        </svg>
+        <p>暂无数据</p>
+      </div>
+      <div class="cards" id="list-reviewed"></div>
+    </div>
+  </div>
+
+  <!-- ============ 请假表单页 ============ -->
+  <div id="page-form" class="page">
+    <header class="app-header">
+      <div class="statusbar">
+        <span id="status-time3">19:16</span>
+        <span class="sb-icons">
+          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
+          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
+          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
+        </span>
+      </div>
+      <div class="header-row">
+        <button class="back" data-go="home" aria-label="返回">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 L8 12 L14.5 19" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h1>请假表单</h1>
+      </div>
+    </header>
+
+    <div class="set-body">
+      <form id="apply-form" class="card">
+        <div class="f-grid">
+          <div class="f-field full">
+            <label>请假类型 *（必填）</label>
+            <input id="a-type" placeholder="例如：病假(不过夜)">
+          </div>
+          <div class="f-field">
+            <label>请假开始时间</label>
+            <input id="a-start" placeholder="例如：2026-06-22 19:21">
+          </div>
+          <div class="f-field">
+            <label>请假结束时间</label>
+            <input id="a-end" placeholder="例如：2026-06-25 18:00">
+          </div>
+          <div class="f-field full">
+            <label>请假事由</label>
+            <textarea id="a-reason" placeholder="例如：感冒发烧，需要休息"></textarea>
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">提交申请</button>
+      </form>
+      <p class="foot-note">提交后生成一条「待审核」记录，可在请假申请页的「待审核」标签中查看。</p>
+    </div>
+  </div>
+
+  <!-- ============ 交费信息（数据管理）页 ============ -->
+  <div id="page-settings" class="page">
+    <header class="app-header">
+      <div class="statusbar">
+        <span id="status-time4">19:16</span>
+        <span class="sb-icons">
+          <svg viewBox="0 0 18 12" width="17" height="12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="5" y="4" width="3" height="8" rx="1" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff" opacity=".5"/></svg>
+          <svg viewBox="0 0 16 12" width="16" height="12"><path d="M1.5 4.5 Q8 -2.5 14.5 4.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".9"/><path d="M4 7 Q8 3.5 12 7" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/></svg>
+          <svg viewBox="0 0 24 12" width="23" height="12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="#fff" stroke-opacity=".6" fill="none"/><rect x="2" y="2" width="14" height="8" rx="1.5" fill="#fff"/><path d="M22 4 v4 a2 2 0 0 0 2-2 v0 a2 2 0 0 0-2-2 Z" fill="#fff" opacity=".6"/></svg>
+        </span>
+      </div>
+      <div class="header-row">
+        <button class="back" data-go="home" aria-label="返回">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 L8 12 L14.5 19" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h1>交费信息</h1>
+      </div>
+    </header>
+
+    <div class="set-body">
+      <div class="tip">
+        这里是隐藏的数据管理页：填写下方表单即可添加请假记录，添加后会立即显示在「请假记录」页面中。
+        审核状态为「待审核 / 审核中」的记录显示在「待审核」标签；「通过 / 不通过」显示在「已审核」标签。
+      </div>
+
+      <form id="record-form" class="card">
+        <div class="f-grid">
+          <div class="f-field full">
+            <label>请假类型 *（必填）</label>
+            <input id="f-type" placeholder="例如：病假(不过夜)">
+          </div>
+          <div class="f-field">
+            <label>申请时间（卡片右上角）</label>
+            <input id="f-apply" placeholder="例如：06-22 19:25">
+          </div>
+          <div class="f-field">
+            <label>打卡次数</label>
+            <input id="f-punch" placeholder="例如：1/2">
+          </div>
+          <div class="f-field">
+            <label>请假开始时间</label>
+            <input id="f-start" placeholder="例如：2026-06-22 19:21">
+          </div>
+          <div class="f-field">
+            <label>请假结束时间</label>
+            <input id="f-end" placeholder="例如：2026-06-25 18:00">
+          </div>
+          <div class="f-field">
+            <label>审核状态</label>
+            <select id="f-audit">
+              <option>通过</option>
+              <option>不通过</option>
+              <option>待审核</option>
+              <option>审核中</option>
+            </select>
+          </div>
+          <div class="f-field">
+            <label>销假状态</label>
+            <select id="f-cancel">
+              <option>未申请</option>
+              <option>已申请</option>
+              <option>已销假</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">＋ 添加记录</button>
+      </form>
+
+      <div class="card">
+        <div class="list-head"><b>已保存的记录</b><span id="saved-count">0 条</span></div>
+        <div id="saved-list"></div>
+        <div class="btn-row">
+          <button class="btn-ghost" id="btn-clear">清空全部记录</button>
+          <button class="btn-ghost" id="btn-restore">恢复示例数据</button>
+        </div>
+      </div>
+
+      <p class="foot-note">提示：数据保存在本机浏览器中（localStorage），仅当前浏览器可见；清除浏览器数据会导致记录丢失。更换浏览器或设备不会同步。</p>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+  var LS_KEY = 'leaveRecords_v2';
+
+  function $(s) { return document.querySelector(s); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ---------- 数据（示例 = 截图中的真实记录） ---------- */
+  var SAMPLES = [
+    { type: '病假（不过夜）', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-25 18:00', punch: '1/2', audit: '通过', cancel: '未申请' },
+    { type: '病假（不过夜）', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/5', audit: '通过', cancel: '未申请' },
+    { type: '病假（不过夜）', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '通过', cancel: '未申请' }
+  ];
+  function makeSamples() {
+    return SAMPLES.map(function (r) {
+      return Object.assign({ id: Date.now() + Math.random() }, r);
+    });
+  }
+  var records;
+  try { records = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { records = null; }
+  if (!Array.isArray(records)) { records = makeSamples(); save(); }
+  function save() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(records)); } catch (e) {}
+  }
+
+  var PENDING = ['待审核', '审核中'];
+  function isPending(r) { return PENDING.indexOf(r.audit) > -1; }
+
+  /* ---------- 渲染：请假记录 ---------- */
+  function cardHTML(r) {
+    var timeLine = [r.start, r.end].filter(Boolean).join(' 至 ');
+    return '<div class="leave-card">'
+      + '<div class="leave-top">'
+      +   '<span class="leave-dot"></span>'
+      +   '<span class="leave-type">' + esc(r.type) + '</span>'
+      +   '<span class="apply-time">' + esc(r.applyTime) + '</span>'
+      + '</div>'
+      + '<div class="leave-body">'
+      +   '<div class="lrow">' + esc(timeLine) + '</div>'
+      +   '<div class="lrow">打卡次数(实/应)：' + esc(r.punch) + '</div>'
+      +   '<div class="lrow">请假审核状态：' + esc(r.audit) + '</div>'
+      +   '<div class="lrow">销假状态：' + esc(r.cancel) + '</div>'
+      + '</div>'
+      + '<div class="leave-actions">'
+      +   '<button type="button" data-toast="「延长请假」为演示功能">延长请假</button>'
+      +   '<button type="button" data-toast="「销假」为演示功能">销假</button>'
+      +   '<button type="button" data-toast="「打卡」为演示功能">打卡</button>'
+      +   '<button type="button" data-toast="「查看」为演示功能">查看</button>'
+      + '</div>'
+      + '</div>';
+  }
+  function fillPane(name, list) {
+    $('#empty-' + name).style.display = list.length ? 'none' : 'flex';
+    $('#list-' + name).innerHTML = list.map(cardHTML).join('');
+  }
+  function renderLeave() {
+    var pend = [], done = [];
+    records.forEach(function (r) { (isPending(r) ? pend : done).push(r); });
+    pend.reverse();
+    done.reverse();
+    fillPane('pending', pend);
+    fillPane('reviewed', done);
+    bindToasts();
+  }
+
+  /* ---------- 渲染：交费信息列表 ---------- */
+  function chipClass(t) {
+    if (/病/.test(t)) return 'chip-orange';
+    if (/事/.test(t)) return 'chip-blue';
+    if (/公|婚/.test(t)) return 'chip-purple';
+    return 'chip-teal';
+  }
+  function renderSettings() {
+    $('#saved-count').textContent = records.length + ' 条';
+    $('#saved-list').innerHTML = records.slice().reverse().map(function (r) {
+      return '<div class="saved-item">'
+        + '<span class="chip ' + chipClass(r.type) + '">' + esc(r.type) + '</span>'
+        + '<div class="info"><b>' + esc(r.applyTime) + '</b>'
+        + '<span>' + esc(r.start) + ' → ' + esc(r.end) + ' · 打卡 ' + esc(r.punch) + ' · ' + esc(r.audit) + ' · ' + esc(r.cancel) + '</span></div>'
+        + '<button class="btn-del" data-id="' + r.id + '">删除</button>'
+        + '</div>';
+    }).join('');
+  }
+  function renderAll() { renderLeave(); renderSettings(); }
+
+  /* ---------- 路由 ---------- */
+  function navigate(name) {
+    if (location.hash === '#' + name) { route(); }
+    else { location.hash = name; }
+  }
+  function route() {
+    var name = location.hash.replace(/^#\/?/, '') || 'home';
+    document.querySelectorAll('.page').forEach(function (p) {
+      p.classList.toggle('active', p.id === 'page-' + name);
+    });
+    window.scrollTo(0, 0);
+    if (name === 'leave') renderLeave();
+    if (name === 'settings') renderSettings();
+  }
+  window.addEventListener('hashchange', route);
+
+  /* ---------- 标签页切换 ---------- */
+  function switchTab(name) {
+    document.querySelectorAll('.tabs .tab').forEach(function (x) {
+      x.classList.toggle('active', x.dataset.tab === name);
+    });
+    document.querySelectorAll('.tab-pane').forEach(function (p) {
+      p.classList.toggle('active', p.id === 'tab-' + name);
+    });
+  }
+  document.querySelectorAll('.tabs .tab').forEach(function (t) {
+    t.addEventListener('click', function () { switchTab(t.dataset.tab); });
+  });
+
+  /* ---------- 点击跳转 ---------- */
+  document.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { navigate(el.dataset.go); });
+  });
+
+  /* ---------- 轻提示 ---------- */
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1600);
+  }
+  function bindToasts() {
+    document.querySelectorAll('[data-toast]').forEach(function (el) {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('click', function () { toast(el.dataset.toast); });
+    });
+  }
+  bindToasts();
+
+  /* ---------- 请假表单：提交申请 ---------- */
+  $('#apply-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var type = $('#a-type').value.trim();
+    if (!type) { toast('请先填写请假类型'); return; }
+    var d = new Date();
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    records.push({
+      id: Date.now() + Math.random(),
+      type: type,
+      applyTime: p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()),
+      start: $('#a-start').value.trim(),
+      end: $('#a-end').value.trim(),
+      punch: '',
+      audit: '待审核',
+      cancel: '未申请'
+    });
+    save();
+    renderAll();
+    $('#apply-form').reset();
+    switchTab('pending');
+    navigate('leave');
+    toast('申请已提交，可在「待审核」查看');
+  });
+
+  /* ---------- 表单：添加记录（数据管理页） ---------- */
+  $('#record-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var val = function (id) { return $(id).value.trim(); };
+    var type = val('#f-type');
+    if (!type) { toast('请先填写请假类型'); return; }
+    records.push({
+      id: Date.now() + Math.random(),
+      type: type,
+      applyTime: val('#f-apply'),
+      start: val('#f-start'),
+      end: val('#f-end'),
+      punch: val('#f-punch'),
+      audit: val('#f-audit'),
+      cancel: val('#f-cancel')
+    });
+    save();
+    renderAll();
+    $('#record-form').reset();
+    toast('已添加记录');
+  });
+
+  /* ---------- 删除单条 ---------- */
+  $('#saved-list').addEventListener('click', function (e) {
+    var b = e.target.closest('.btn-del');
+    if (!b) return;
+    if (!confirm('确定删除这条记录吗？')) return;
+    records = records.filter(function (r) { return String(r.id) !== b.dataset.id; });
+    save();
+    renderAll();
+    toast('已删除');
+  });
+
+  /* ---------- 清空 / 恢复示例 ---------- */
+  $('#btn-clear').addEventListener('click', function () {
+    if (!confirm('确定清空全部记录吗？')) return;
+    records = [];
+    save();
+    renderAll();
+    toast('已清空');
+  });
+  $('#btn-restore').addEventListener('click', function () {
+    if (!confirm('将删除现有记录并恢复示例数据，确定吗？')) return;
+    records = makeSamples();
+    save();
+    renderAll();
+    toast('已恢复示例数据');
+  });
+
+  /* ---------- 状态栏时间 ---------- */
+  var now = new Date();
+  var hh = now.getHours(), mm = now.getMinutes();
+  var timeStr = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+  ['status-time', 'status-time2', 'status-time3', 'status-time4'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = timeStr;
+  });
+
+  /* ---------- 初始化 ---------- */
+  route();
+})();
+</script>
+</body>
+</html>
