@@ -23,28 +23,25 @@
   --light:#ABABAB;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-/* 修复：顶部状态栏颜色跟随 body，改为蓝色，消除白边 */
+html{background:#fff}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
-  background:var(--blue);color:var(--ink);font-size:14px;
+  background:#fff;color:var(--ink);font-size:14px;
 }
-.app{max-width:480px;margin:0 auto;min-height:100vh;background:#fff}
-.page{display:none;min-height:100vh;background:#fff}
+.app{width:100%;max-width:none;margin:0 auto;min-height:100vh;background:#fff}
+.page{display:none;min-height:100vh}
 .page.active{display:flex;flex-direction:column}
 button{font-family:inherit}
-
-/* ================= 顶部蓝色栏 ================= */
+/* ================= 顶部蓝色栏（无假状态栏） ================= */
 .app-header{
   background:var(--blue);
   color:#fff;
-  /* 修复：确保安全区生效，如果失效也保底有 20px 间距，防止顶死 */
-  padding: max(env(safe-area-inset-top, 0px), 20px) 14px 12px;
+  padding:14px 14px 12px;
 }
 .header-row{position:relative;display:flex;align-items:center;justify-content:center;min-height:26px}
 .header-row h1{font-size:16.5px;font-weight:600;letter-spacing:.5px}
 .back{position:absolute;left:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:2px}
 .header-btn{position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:15.5px;cursor:pointer;letter-spacing:1px}
-
 /* ================= 首页 ================= */
 #page-home{background:#fff}
 .home-body{padding:14px 16px 34px;flex:1}
@@ -60,11 +57,9 @@ button{font-family:inherit}
 .sec-item{position:absolute;display:flex;flex-direction:column;align-items:center;gap:9px;border:none;background:none;padding:0}
 .sec-item .icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
 .sec-item .name{font-size:12px;color:#6c6c6c;white-space:nowrap}
-/* 修改了图标位置，使左右两边严格对齐居中 */
-.pos-1{left:16.66%;top:0;transform:translateX(-50%)}
-.pos-2{left:50%;top:6px;transform:translateX(-50%)}
-.pos-3{left:83.33%;top:2px;transform:translateX(-50%)}
-
+.pos-1{left:14%;top:0;transform:translateX(-50%)}
+.pos-2{left:48%;top:6px;transform:translateX(-50%)}
+.pos-3{left:80%;top:2px;transform:translateX(-50%)}
 /* ================= 请假记录页 ================= */
 .tabs{display:grid;grid-template-columns:1fr 1fr;padding:15px 0 3px;background:#fff}
 .tab{position:relative;text-align:center;font-size:15px;color:var(--gray);cursor:pointer;background:none;border:none;padding-bottom:13px}
@@ -72,23 +67,20 @@ button{font-family:inherit}
 .tab.active::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:26px;height:3px;border-radius:2px;background:#d6f2ff}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
-
 /* 空状态 */
 .empty{display:flex;flex-direction:column;align-items:center;padding:120px 0 48px}
 .empty svg{width:225px;height:auto}
 .empty p{margin-top:18px;font-size:13.5px;color:#a6acb7}
-
 /* 记录卡片 */
-.cards{padding:14px 12px 26px;display:flex;flex-direction:column;gap:14px}
-.leave-card{background:#fff;border:1px solid #eef1f6;border-radius:16px;padding:16px 14px 14px}
+.cards{padding:14px 0 26px;display:flex;flex-direction:column;gap:0}
+.leave-card{background:#fff;border:0;border-bottom:1px solid #eef1f6;border-radius:0;padding:12px 24px 16px}
 .leave-top{display:flex;align-items:center;gap:8px}
 .leave-dot{width:8px;height:8px;border-radius:50%;background:#1353ef;flex-shrink:0}
 .leave-type{font-size:15.5px;font-weight:700;color:#2e4b93;flex:1}
 .apply-time{font-size:11px;color:var(--light);flex-shrink:0}
 .leave-body{margin-top:13px}
 .lrow{font-size:14.5px;color:var(--body);padding:5px 0}
-
-/* 四个操作按钮 */
+/* 四个操作按钮：深蓝色、整体靠右、上方带分隔线 */
 .leave-actions{
   margin-top:14px;
   padding-top:14px;
@@ -109,7 +101,6 @@ button{font-family:inherit}
   white-space:nowrap;
 }
 .leave-actions button:active{background:#0d5fcf}
-
 /* ================= 表单 / 数据管理页 ================= */
 .set-body{padding:14px 14px 28px;flex:1}
 .tip{background:#eaf3ff;border-radius:10px;padding:11px 13px;font-size:12.5px;color:#3b6fd6;line-height:1.7;margin-bottom:14px}
@@ -142,7 +133,6 @@ button{font-family:inherit}
 .btn-ghost{flex:1;padding:10px;background:#fff;border:1px solid #e3e8f0;border-radius:10px;color:var(--gray);font-size:13px;cursor:pointer}
 .btn-ghost:active{background:#f6f8fc}
 .foot-note{font-size:11.5px;color:#b3bac7;line-height:1.8;padding:0 6px}
-
 /* ================= 轻提示 ================= */
 #toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:rgba(20,28,45,.88);color:#fff;font-size:13px;padding:9px 18px;border-radius:22px;opacity:0;pointer-events:none;z-index:99;max-width:80%;text-align:center}
 #toast.show{opacity:1}
@@ -150,13 +140,11 @@ button{font-family:inherit}
 </head>
 <body>
 <div class="app">
-
   <!-- ============ 首页 ============ -->
   <div id="page-home" class="page active">
     <header class="app-header">
       <div class="header-row"><h1>学综服务</h1></div>
     </header>
-
     <div class="home-body">
       <div class="search-row">
         <div class="search-bar">
@@ -168,7 +156,6 @@ button{font-family:inherit}
           <span>关注服务</span>
         </button>
       </div>
-
       <div class="section">
         <div class="sec-title">住宿</div>
         <div class="sec-items">
@@ -186,7 +173,6 @@ button{font-family:inherit}
           </div>
         </div>
       </div>
-
       <div class="section">
         <div class="sec-title">交费</div>
         <div class="sec-items">
@@ -196,7 +182,6 @@ button{font-family:inherit}
           </div>
         </div>
       </div>
-
       <div class="section">
         <div class="sec-title">学生事务</div>
         <div class="sec-items">
@@ -206,7 +191,6 @@ button{font-family:inherit}
           </div>
         </div>
       </div>
-
       <div class="section">
         <div class="sec-title">助学</div>
         <div class="sec-items">
@@ -218,24 +202,22 @@ button{font-family:inherit}
       </div>
     </div>
   </div>
-
   <!-- ============ 请假记录页 ============ -->
   <div id="page-leave" class="page">
     <header class="app-header">
       <div class="header-row">
         <button class="back" data-go="home" aria-label="返回">
+          <!-- 左图原版“✕”叉号图标，替换了原来的“<” -->
           <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
         </button>
         <h1>请假申请</h1>
         <button class="header-btn" type="button" data-toast="「申办」为演示功能">申办</button>
       </div>
     </header>
-
     <div class="tabs">
       <button class="tab active" data-tab="pending">待审核</button>
       <button class="tab" data-tab="reviewed">已审核</button>
     </div>
-
     <div id="tab-pending" class="tab-pane active">
       <div class="empty" id="empty-pending">
         <svg viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -260,7 +242,6 @@ button{font-family:inherit}
       </div>
       <div class="cards" id="list-pending"></div>
     </div>
-
     <div id="tab-reviewed" class="tab-pane">
       <div class="empty" id="empty-reviewed">
         <svg viewBox="0 0 300 230" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -286,7 +267,6 @@ button{font-family:inherit}
       <div class="cards" id="list-reviewed"></div>
     </div>
   </div>
-
   <!-- ============ 请假表单页 ============ -->
   <div id="page-form" class="page">
     <header class="app-header">
@@ -297,7 +277,6 @@ button{font-family:inherit}
         <h1>请假表单</h1>
       </div>
     </header>
-
     <div class="set-body">
       <form id="apply-form" class="card">
         <div class="f-grid">
@@ -323,7 +302,6 @@ button{font-family:inherit}
       <p class="foot-note">提交后生成一条「待审核」记录，可在请假申请页的「待审核」标签中查看。</p>
     </div>
   </div>
-
   <!-- ============ 交费信息（数据管理）页 ============ -->
   <div id="page-settings" class="page">
     <header class="app-header">
@@ -334,13 +312,11 @@ button{font-family:inherit}
         <h1>交费信息</h1>
       </div>
     </header>
-
     <div class="set-body">
       <div class="tip">
         这里是隐藏的数据管理页：填写下方表单即可添加请假记录，添加后会立即显示在「请假记录」页面中。
         审核状态为「待审核 / 审核中」的记录显示在「待审核」标签；「通过 / 不通过」显示在「已审核」标签。
       </div>
-
       <form id="record-form" class="card">
         <div class="f-grid">
           <div class="f-field full">
@@ -383,7 +359,6 @@ button{font-family:inherit}
         </div>
         <button class="btn-primary" type="submit">＋ 添加记录</button>
       </form>
-
       <div class="card">
         <div class="list-head"><b>已保存的记录</b><span id="saved-count">0 条</span></div>
         <div id="saved-list"></div>
@@ -392,34 +367,211 @@ button{font-family:inherit}
           <button class="btn-ghost" id="btn-restore">恢复示例数据</button>
         </div>
       </div>
-
       <p class="foot-note">提示：数据保存在本机浏览器中（localStorage），仅当前浏览器可见；清除浏览器数据会导致记录丢失。更换浏览器或设备不会同步。</p>
     </div>
   </div>
-
 </div>
-
 <div id="toast"></div>
-
 <script>
 (function () {
   'use strict';
-  // 修改了版本号，强制浏览器刷新缓存数据
-  var LS_KEY = 'leaveRecords_v5';
-
+  var LS_KEY = 'leaveRecords_v3';
   function $(s) { return document.querySelector(s); }
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-
-  /* ---------- 数据（将3条数据全部设为待审核，确保待审核有内容） ---------- */
+  /* ---------- 数据（已修复括号格式，与左图一致） ---------- */
   var SAMPLES = [
-    { type: '病假(不过夜)', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-23 18:00', punch: '1/2', audit: '待审核', cancel: '未申请' },
-    { type: '病假(不过夜)', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/3', audit: '待审核', cancel: '未申请' },
-    { type: '病假(不过夜)', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '待审核', cancel: '未申请' }
+    { type: '病假(不过夜)', applyTime: '06-22 19:25', start: '2026-06-22 19:21', end: '2026-06-23 18:00', punch: '1/2', audit: '通过', cancel: '未申请' },
+    { type: '病假(不过夜)', applyTime: '06-20 18:12', start: '2026-06-20 18:10', end: '2026-06-22 18:00', punch: '0/5', audit: '通过', cancel: '未申请' },
+    { type: '病假(不过夜)', applyTime: '2025-12-21 20:42', start: '2025-12-22 08:00', end: '2025-12-22 12:00', punch: '0/1', audit: '通过', cancel: '未申请' }
   ];
   function makeSamples() {
     return SAMPLES.map(function (r) {
-      return Object.assign({ id: Date.now()
+      return Object.assign({ id: Date.now() + Math.random() }, r);
+    });
+  }
+  var records;
+  try { records = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { records = null; }
+  if (!Array.isArray(records)) { records = makeSamples(); save(); }
+  function save() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(records)); } catch (e) {}
+  }
+  var PENDING = ['待审核', '审核中'];
+  function isPending(r) { return PENDING.indexOf(r.audit) > -1; }
+  function cardHTML(r) {
+    /* 修复1：时间连接符由“ 至 ”改为“至”（无空格） */
+    var timeLine = [r.start, r.end].filter(Boolean).join('至');
+    return '<div class="leave-card">'
+      + '<div class="leave-top">'
+      +   '<span class="leave-dot"></span>'
+      +   '<span class="leave-type">' + esc(r.type) + '</span>'
+      +   '<span class="apply-time">' + esc(r.applyTime) + '</span>'
+      + '</div>'
+      + '<div class="leave-body">'
+      +   '<div class="lrow">' + esc(timeLine) + '</div>'
+      +   '<div class="lrow">打卡次数(实/应)：' + esc(r.punch) + '</div>'
+      +   '<div class="lrow">请假审核状态：' + esc(r.audit) + '</div>'
+      +   '<div class="lrow">销假状态：' + esc(r.cancel) + '</div>'
+      + '</div>'
+      + '<div class="leave-actions">'
+      +   '<button type="button" data-toast="「延长请假」为演示功能">延长请假</button>'
+      +   '<button type="button" data-toast="「销假」为演示功能">销假</button>'
+      +   '<button type="button" data-toast="「打卡」为演示功能">打卡</button>'
+      +   '<button type="button" data-toast="「查看」为演示功能">查看</button>'
+      + '</div>'
+      + '</div>';
+  }
+  function fillPane(name, list) {
+    $('#empty-' + name).style.display = list.length ? 'none' : 'flex';
+    $('#list-' + name).innerHTML = list.map(cardHTML).join('');
+  }
+  
+  function renderLeave() {
+    var pend = [], done = [];
+    records.forEach(function (r) { (isPending(r) ? pend : done).push(r); });
+    /* 修复2：移除 .reverse()，保持数据原本的倒序排列（最新在上） */
+    fillPane('pending', pend);
+    fillPane('reviewed', done);
+    bindToasts();
+  }
+  function chipClass(t) {
+    if (/病/.test(t)) return 'chip-orange';
+    if (/事/.test(t)) return 'chip-blue';
+    if (/公|婚/.test(t)) return 'chip-purple';
+    return 'chip-teal';
+  }
+  function renderSettings() {
+    $('#saved-count').textContent = records.length + ' 条';
+    $('#saved-list').innerHTML = records.slice().map(function (r) { /* 管理页同样不反转，按时间倒序 */
+      return '<div class="saved-item">'
+        + '<span class="chip ' + chipClass(r.type) + '">' + esc(r.type) + '</span>'
+        + '<div class="info"><b>' + esc(r.applyTime) + '</b>'
+        + '<span>' + esc(r.start) + ' → ' + esc(r.end) + ' · 打卡 ' + esc(r.punch) + ' · ' + esc(r.audit) + ' · ' + esc(r.cancel) + '</span></div>'
+        + '<button class="btn-del" data-id="' + r.id + '">删除</button>'
+        + '</div>';
+    }).join('');
+  }
+  function renderAll() { renderLeave(); renderSettings(); }
+  function navigate(name) {
+    if (location.hash === '#' + name) { route(); }
+    else { location.hash = name; }
+  }
+  function route() {
+    var name = location.hash.replace(/^#\/?/, '') || 'home';
+    document.querySelectorAll('.page').forEach(function (p) {
+      p.classList.toggle('active', p.id === 'page-' + name);
+    });
+    window.scrollTo(0, 0);
+    if (name === 'leave') renderLeave();
+    if (name === 'settings') renderSettings();
+  }
+  window.addEventListener('hashchange', route);
+  function switchTab(name) {
+    document.querySelectorAll('.tabs .tab').forEach(function (x) {
+      x.classList.toggle('active', x.dataset.tab === name);
+    });
+    document.querySelectorAll('.tab-pane').forEach(function (p) {
+      p.classList.toggle('active', p.id === 'tab-' + name);
+    });
+  }
+  document.querySelectorAll('.tabs .tab').forEach(function (t) {
+    t.addEventListener('click', function () { switchTab(t.dataset.tab); });
+  });
+  document.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { navigate(el.dataset.go); });
+  });
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1600);
+  }
+  function bindToasts() {
+    document.querySelectorAll('[data-toast]').forEach(function (el) {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('click', function () { toast(el.dataset.toast); });
+    });
+  }
+  bindToasts();
+  $('#apply-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var type = $('#a-type').value.trim();
+    if (!type) { toast('请先填写请假类型'); return; }
+    var d = new Date();
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    records.push({
+      id: Date.now() + Math.random(),
+      type: type,
+      applyTime: p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()),
+      start: $('#a-start').value.trim(),
+      end: $('#a-end').value.trim(),
+      punch: '',
+      audit: '待审核',
+      cancel: '未申请'
+    });
+    save();
+    renderAll();
+    $('#apply-form').reset();
+    switchTab('pending');
+    navigate('leave');
+    toast('申请已提交，可在「待审核」查看');
+  });
+  $('#record-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var val = function (id) { return $(id).value.trim(); };
+    var type = val('#f-type');
+    if (!type) { toast('请先填写请假类型'); return; }
+    records.push({
+      id: Date.now() + Math.random(),
+      type: type,
+      applyTime: val('#f-apply'),
+      start: val('#f-start'),
+      end: val('#f-end'),
+      punch: val('#f-punch'),
+      audit: val('#f-audit'),
+      cancel: val('#f-cancel')
+    });
+    save();
+    renderAll();
+    $('#record-form').reset();
+    toast('已添加记录');
+  });
+  $('#saved-list').addEventListener('click', function (e) {
+    var b = e.target.closest('.btn-del');
+    if (!b) return;
+    if (!confirm('确定删除这条记录吗？')) return;
+    records = records.filter(function (r) { return String(r.id) !== b.dataset.id; });
+    save();
+    renderAll();
+    toast('已删除');
+  });
+  $('#btn-clear').addEventListener('click', function () {
+    if (!confirm('确定清空全部记录吗？')) return;
+    records = [];
+    save();
+    renderAll();
+    toast('已清空');
+  });
+  $('#btn-restore').addEventListener('click', function () {
+    if (!confirm('将删除现有记录并恢复示例数据，确定吗？')) return;
+    records = makeSamples();
+    save();
+    renderAll();
+    toast('已恢复示例数据');
+  });
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
+  route();
+})();
+</script>
+</body>
+</html>
