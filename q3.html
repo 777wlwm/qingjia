@@ -646,3 +646,11 @@ body.fakebar-on #fake-status{display:flex}
   });
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
+  route();
+})();
+</script>
+</body>
+</html>
